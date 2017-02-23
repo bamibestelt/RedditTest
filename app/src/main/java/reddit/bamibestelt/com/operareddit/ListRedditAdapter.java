@@ -1,5 +1,7 @@
 package reddit.bamibestelt.com.operareddit;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +36,7 @@ public class ListRedditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         if(holder instanceof ItemViewHolder) {
             if(list.get(position).getType() == ItemState.TYPE_FETCH) {
                 ((ItemViewHolder)holder).content.setVisibility(View.GONE);
@@ -52,6 +54,8 @@ public class ListRedditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     @Override
                     public void onClick(View v) {
                         // set new intent to browser
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(list.get(position).getPermalink()));
+                        mainActivity.startActivity(browserIntent);
                     }
                 });
             }

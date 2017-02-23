@@ -22,9 +22,7 @@ public class JsonUtils {
             JSONObject obj = new JSONObject(json);
             JSONObject data = obj.getJSONObject("data");
             JSONArray arrays = data.getJSONArray("children");
-            //Log.d("JsonUtils", "after:"+data.getString("after"));
             Constants.getInstance().setAFTER(data.getString("after"));
-            //Log.d("JsonUtils", "after:"+Constants.getInstance().getAFTER());
 
             int i=0;
             while(i < arrays.length()) {
@@ -35,6 +33,7 @@ public class JsonUtils {
                 reddit.setTitle(content.getString("title"));
                 reddit.setScore(content.getString("score"));
                 reddit.setSubreddit(content.getString("subreddit"));
+                reddit.setPermalink(content.getString("permalink"));
 
                 redditModel.add(reddit);
                 i++;

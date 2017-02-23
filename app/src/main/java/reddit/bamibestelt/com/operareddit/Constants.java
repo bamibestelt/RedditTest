@@ -9,7 +9,8 @@ public class Constants {
     private static Constants constants;
 
     private String AFTER = "";
-    private final String MAIN_URL = "https://www.reddit.com/r/gaming/top.json";
+    private final String MAIN_URL = "https://www.reddit.com";
+    private final String TOP_API = MAIN_URL + "/r/gaming/top.json";
 
     public Constants() {}
 
@@ -20,6 +21,9 @@ public class Constants {
         return constants;
     }
 
+    public String getMAIN_URL() {
+        return MAIN_URL;
+    }
 
     public void setAFTER(String AFTER) {
         this.AFTER = AFTER;
@@ -30,6 +34,6 @@ public class Constants {
     }
 
     public String getAPI_URL() {
-        return MAIN_URL + "?after=" + AFTER;
+        return TOP_API + "?after=" + AFTER;
     }
 }

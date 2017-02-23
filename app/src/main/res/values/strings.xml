@@ -1,4 +1,7 @@
 <resources>
-    <string name="app_name">OperaReddit</string>
+    <string name="app_name">Reddit</string>
     <string name="no_list_data">No Data</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_content">Reddit</string>
 </resources>

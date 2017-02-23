@@ -1,5 +1,7 @@
 package reddit.bamibestelt.com.operareddit;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -10,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -60,17 +63,22 @@ public class MainActivity extends AppCompatActivity implements RedditCallback {
 
         // Instantiate the RequestQueue.
         queue = Volley.newRequestQueue(this);
+
+        progressLoadingReddit.setVisibility(View.VISIBLE);
+
+        // Add the request to the RequestQueue.
+        if(isNetworkAvailable(this)) {
+            Log.d("REQUEST", Constants.getInstance().getAPI_URL());
+            queue.add(new RedditRequest(this));
+        } else {
+            Toast.makeText(this, "Not Connected to Internet", Toast.LENGTH_SHORT).show();
+            handlingData.sendEmptyMessage(NOTIFY_ERROR);
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        progressLoadingReddit.setVisibility(View.VISIBLE);
-
-        // Add the request to the RequestQueue.
-        Log.d("REQUEST", Constants.getInstance().getAPI_URL());
-        queue.add(new RedditRequest(this));
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -94,8 +102,6 @@ public class MainActivity extends AppCompatActivity implements RedditCallback {
             }
         });
     }
-
-
 
 
     @Override
@@ -142,10 +148,17 @@ public class MainActivity extends AppCompatActivity implements RedditCallback {
     }
 
     private void requestNextPage() {
-        loading = true;
-        appendLoading();
-        Log.d("REQUEST", Constants.getInstance().getAPI_URL());
-        queue.add(new RedditRequest(this));
+        if(isNetworkAvailable(this)) {
+            loading = true;
+            appendLoading();
+            Log.d("REQUEST", Constants.getInstance().getAPI_URL());
+            queue.add(new RedditRequest(this));
+        }
+    }
+
+    public boolean isNetworkAvailable(final Context context) {
+        final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
+        return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
     }
 
 
@@ -175,12 +188,14 @@ public class MainActivity extends AppCompatActivity implements RedditCallback {
                     progressLoadingReddit.setVisibility(View.GONE);
                     llNoData.setVisibility(View.VISIBLE);
                     loading = false;
+                    Toast.makeText(MainActivity.this, "No more data", Toast.LENGTH_SHORT).show();
                     break;
                 case NOTIFY_ERROR:
                     mRecyclerView.setVisibility(View.GONE);
                     progressLoadingReddit.setVisibility(View.GONE);
                     llNoData.setVisibility(View.VISIBLE);
                     loading = false;
+                    Toast.makeText(MainActivity.this, "Request error", Toast.LENGTH_SHORT).show();
                     break;
                 case APPEND_LOADING:
                     mList.add(new RedditModel("Loading...", ItemState.TYPE_FETCH));
@@ -190,6 +205,7 @@ public class MainActivity extends AppCompatActivity implements RedditCallback {
                     mList.remove(start);
                     mAdapter.notifyItemRemoved(start);
                     mAdapter.notifyItemRangeChanged(start, mList.size());
+                    loading = false;
                     break;
             }
         }

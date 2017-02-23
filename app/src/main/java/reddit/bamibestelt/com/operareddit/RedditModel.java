@@ -13,6 +13,7 @@ public class RedditModel implements Serializable {
     private String score;
     private String subreddit;
     private String title;
+    private String permalink;
 
     public RedditModel() {
         super();
@@ -49,5 +50,13 @@ public class RedditModel implements Serializable {
 
     public int getType() {
         return type;
+    }
+
+    public void setPermalink(String permalink) {
+        this.permalink = permalink;
+    }
+
+    public String getPermalink() {
+        return Constants.getInstance().getMAIN_URL() + permalink;
     }
 }
